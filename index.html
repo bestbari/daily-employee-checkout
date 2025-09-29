@@ -1,0 +1,40 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <title>Redirecting to Google Form...</title>
+</head>
+<body>
+  <p>Getting your location, please wait...</p>
+
+  <script>
+    // Your form base link (without the dummy 0,0)
+    const formBaseUrl = "https://docs.google.com/forms/d/e/1FAIpQLSe-d3DNmmPF2Zg_awjhqFDZLS7rswhV0sd7QWRovLE5UHoNWQ/viewform?usp=pp_url";
+
+    // Your Location field ID
+    const locationEntry = "entry.454150028";
+
+    if (navigator.geolocation) {
+      navigator.geolocation.getCurrentPosition(function(position) {
+        const lat = position.coords.latitude;
+        const lng = position.coords.longitude;
+
+        // Combine into "lat,lng"
+        const locationValue = `${lat},${lng}`;
+
+        // Build prefilled form URL
+        const prefillUrl = `${formBaseUrl}&${locationEntry}=${encodeURIComponent(locationValue)}`;
+
+        // Redirect user to the Google Form
+        window.location.href = prefillUrl;
+
+      }, function(error) {
+        alert("⚠️ Could not get your location. Redirecting without location.");
+        window.location.href = formBaseUrl; // fallback
+      });
+    } else {
+      alert("⚠️ Geolocation not supported. Redirecting without location.");
+      window.location.href = formBaseUrl; // fallback
+    }
+  </script>
+</body>
+</html>
