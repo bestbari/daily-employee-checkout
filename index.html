@@ -2,34 +2,40 @@
 <html>
 <head>
   <meta charset="UTF-8">
-  <title>Google Form with Location</title>
-  <script>
-    function redirectWithLocation(position) {
-      const lat = position.coords.latitude;
-      const lng = position.coords.longitude;
-      // Replace the entry field with your Google Form’s prefill field
-      const formURL = `https://docs.google.com/forms/d/e/1FAIpQLSeS8ABSUe0dYQWmXipEmygOOBLa-D98SG1NBSip9s-129dZSw/viewform?usp=pp_url&entry.1280635522=${lat},${lng}`;
-      window.location.href = formURL;
-    }
-
-    function handleError(error) {
-      alert("Unable to access your location. Please enable GPS or allow location permission.");
-      console.error(error);
-    }
-
-    function requestLocation() {
-      if (navigator.geolocation) {
-        navigator.geolocation.getCurrentPosition(redirectWithLocation, handleError);
-      } else {
-        alert("Geolocation is not supported by your browser.");
-      }
-    }
-
-    window.onload = requestLocation;
-  </script>
+  <title>Redirecting to Google Form...</title>
 </head>
 <body>
-  <h2>Getting your location…</h2>
-  <p>Please allow location access to continue to the form.</p>
+  <p>📍 Getting your location, please wait...</p>
+
+  <script>
+    // Your form base link (without the dummy 0,0)
+    const formBaseUrl = "https://docs.google.com/forms/d/e/1FAIpQLSeS8ABSUe0dYQWmXipEmygOOBLa-D98SG1NBSip9s-129dZSw/viewform?usp=pp_url";
+
+    // Your Location field ID
+    const locationEntry = "entry.1280635522";
+
+    if (navigator.geolocation) {
+      navigator.geolocation.getCurrentPosition(function(position) {
+        const lat = position.coords.latitude;
+        const lng = position.coords.longitude;
+
+        // Combine into "lat,lng"
+        const locationValue = `${lat},${lng}`;
+
+        // Build prefilled form URL
+        const prefillUrl = `${formBaseUrl}&${locationEntry}=${encodeURIComponent(locationValue)}`;
+
+        // Redirect user to the Google Form
+        window.location.href = prefillUrl;
+
+      }, function(error) {
+        alert("⚠️ Could not get your location. Redirecting without location.");
+        window.location.href = formBaseUrl; // fallback
+      });
+    } else {
+      alert("⚠️ Geolocation not supported. Redirecting without location.");
+      window.location.href = formBaseUrl; // fallback
+    }
+  </script>
 </body>
 </html>
